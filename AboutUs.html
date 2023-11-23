@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive-style.css">
+    <script src="js/userEmail.js"></script>
 </head>
 <body>
     <header>
@@ -23,22 +24,38 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                            <a class="nav-link active" aria-current="page" href="#home">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#about">About Us</a>
+                            <a class="nav-link" href="/index.html">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="search.html">View Restaurants</a>
+                            <a class="nav-link" href="/search.html">View Restaurants</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Top</a>
+                            <a class="nav-link" href="/index.html">Top</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Contact Us</a>
+                            <a class="nav-link" href="/AboutUs.html">Contact Us</a>
                         </li>
                     </ul>
                 </div>
+                <div class="d-flex  order-lg-0">
+                    <button type="button" class="btn btn-primary" id="openModalButton" style=" border: #A82C48; background-color: #A82C48; color: white;">
+                        Login 
+                    </button>
+                    <div style="margin-left: 10px; margin-right: 10px;"></div> 
+                    <button type="button" class="btn btn-primary" id="openModalButton2" style=" border: #A82C48; background-color: #A82C48; color: white;">
+                        Register
+                    </button>
+                    <li style="list-style-type: none;">
+                      <a class="nav-link" id="userEmail" style="display: none; border: #A82C48; background-color: #A82C48; color: white;"></a>
+                    </li>
+                    <div style="margin-left: 10px; margin-right: 10px;"></div> 
+            
+                    <button id="logoutButton" onclick="logout()" class="btn btn-primary"  style="display: none; border: #A82C48; background-color: #A82C48; color: white;">Exit</button>
+            
+                  </div>
             </div>
         </nav>
     </header>
@@ -144,6 +161,196 @@
             </div>
         </div>
     </div>
+    
+<!-- Login -->
+<div id="loginModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Log In</h5>
+                <button type="button" class="close" id="closeModalButton">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email.">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password.">
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary" style=" border: #A82C48; background-color: #A82C48; color: white;" >Log In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var openModalButton = document.getElementById("openModalButton");
+    var closeModalButton = document.getElementById("closeModalButton");
+    var loginModal = document.getElementById("loginModal");
+    var loginForm = document.getElementById("loginForm");
+  
+    openModalButton.addEventListener("click", function () {
+        loginModal.style.display = "block";
+    });
+  
+    closeModalButton.addEventListener("click", function () {
+        loginModal.style.display = "none";
+    });
+  
+    window.addEventListener("click", function (event) {
+        if (event.target === loginModal) {
+            loginModal.style.display = "none";
+        }
+    });
+  
+    loginForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+  
+        const userData = {
+            email: email,
+            password: password,
+        };
+  
+        console.log("test message");
+        console.log(email, password);
+  
+        fetch("http://localhost:8080/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        })
+        .then((response) => {
+            if (response.ok) {
+              localStorage.setItem("userEmail", email);
+              document.getElementById("userEmail").textContent = email;
+              document.getElementById("userEmail").style.display = "block";
+              document.getElementById("openModalButton").style.display = "none";
+              document.getElementById("openModalButton2").style.display = "none";
+              document.getElementById("logoutButton").style.display = "block";
+              loginModal.style.display = "none";
+              return response.text();
+            } else {
+                alert("You wrote wrong. Check your credentials.");
+                return;
+            }
+        })
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error("Произошла ошибка:", error);
+        }); 
+    });
+  });
+  </script>
+  
+  <div id="signInModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Sign Up</h5>
+                <button type="button" class="close" id="closeModalButton2">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email2" placeholder="Enter your email.">
+                    </div>
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" class="form-control" id="fullname2" placeholder="Enter your full name.">
+                    </div>
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="text" class="form-control" id="phoneNumber2" placeholder="Enter your phone number.">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password2" placeholder="Enter your password.">
+                    </div><br>
+                    <button type="submit" class="btn btn-primary" style="border: #A82C48; background-color: #A82C48; color: white;">Sign Up</button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var openModalButton = document.getElementById("openModalButton2");
+    var closeModalButton = document.getElementById("closeModalButton2");
+    var signInModal = document.getElementById("signInModal");
+    var registerForm = document.querySelector("#signInModal form");
+  
+    openModalButton.addEventListener("click", function () {
+      signInModal.style.display = "block";
+    });
+  
+    closeModalButton.addEventListener("click", function () {
+      signInModal.style.display = "none";
+    });
+  
+    window.addEventListener("click", function (event){
+        if (event.target === signInModal) {
+          signInModal.style.display = "none";
+        }
+    });
+  
+    registerForm.addEventListener("submit", function (event) {      event.preventDefault();
+        const email = document.getElementById("email2").value;
+        const fullname = document.getElementById("fullname2").value;
+        const phoneNumber = document.getElementById("phoneNumber2").value;
+        const password = document.getElementById("password2").value;
+  
+        const userData = {
+            email: email,
+            fullname: fullname,
+            phoneNumber: phoneNumber,
+            password: password,
+        };
+        fetch("http://localhost:8080/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+        })
+        .then((response) => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error("Ошибка HTTP: " + response.status);
+            }
+        })
+        .then((data) => {
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error("Произошла ошибка:", error);
+        });
+        localStorage.setItem("userEmail", email);
+        document.getElementById("userEmail").textContent = email;
+        document.getElementById("userEmail").style.display = "block";
+        document.getElementById("openModalButton").style.display = "none";
+        document.getElementById("openModalButton2").style.display = "none";
+        document.getElementById("logoutButton").style.display = "block";
+  
+        loginModal.style.display = "none";
+    });
+  });
+  </script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
         crossorigin="anonymous"></script>
